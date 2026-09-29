@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Online Shopping System{% endblock %}
+
+{% block content %}
+<h1>Checkout & Payment</h1>
+<p style="color: #4b5563; margin-bottom: 24px;">Confirm your order items and complete payment simulation.</p>
+
+<div id="checkout-message" class="message-box" style="display: none;"></div>
+
+<!-- Checkout Container -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;" id="checkout-grid">
+
+  <!-- Left: Order Items Review -->
+  <div class="card">
+    <h2>Order Review</h2>
+    <ul class="order-items-list">
+      {% for itm in items %}
+        <li>
+          <span>
+            <strong>{{ itm.name }}</strong> &times; {{ itm.quantity }}
+          </span>
+          <span>₹{{ "%.2f"|format(itm.line_total) }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <div style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+      <div class="bill-line">
+        <span>Subtotal</span>
+        <span>₹{{ "%.2f"|format(totals.subtotal) }}</span>
+      </div>
+      <div class="bill-line">
+        <span>Discount</span>
+        <span>-₹{{ "%.2f"|format(totals.discount) }}</span>
+      </div>
+      <div class="bill-line">
+        <span>Taxable Amount</span>
+        <span>₹{{ "%.2f"|format(totals.taxable_amount) }}</span>
+      </div>
+      <div class="bill-line">
+        <span>GST (18%)</span>
+        <span>₹{{ "%.2f"|format(totals.tax) }}</span>
+      </div>
+      <div class="bill-line">
+        <span>Delivery Fee</span>
+        <span>
+          {% if totals.delivery_charge == 0.0 %}
+            <span style="color: #16a34a;">FREE</span>
+          {% else %}
+            ₹{{ "%.2f"|format(totals.delivery_charge) }}
+          {% endif %}
+        </span>
+      </div>
+      <div class="bill-line total">
+        <span>Amount Payable</span>
+        <span>₹{{ "%.2f"|format(totals.total) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Payment Method & Execution -->
+  <div class="card">
+    <div id="checkout-form-container">
+      <h2>Payment Method</h2>
+
+      <form id="checkout-form" onsubmit="handleCheckout(event)">
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="payment_method" value="UPI" checked>
+            <span>UPI (Unified Payments Interface)</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="payment_method" value="Card">
+            <span>Debit / Credit Card</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="payment_method" value="Cash on Delivery">
+            <span>Cash on Delivery</span>
+          </label>
+        </div>
+
+        <div class="checkbox-group" style="margin-top: 20px; padding: 12px; border: 1px dashed #e5e7eb; border-radius: 6px;">
+          <input type="checkbox" id="simulate-fail">
+          <label for="simulate-fail" style="cursor: pointer;">
+            <strong>Simulate payment failure</strong>
+            <small style="display: block; color: #6b7280;">
+              Check this to test gateway error handling (stock will remain intact).
+            </small>
+          </label>
+        </div>
+
+        <button type="submit" id="pay-button" class="btn btn-block" style="margin-top: 20px;">
+          Confirm & Pay ₹{{ "%.2f"|format(totals.total) }}
+        </button>
+      </form>
+    </div>
+
+    <!-- View displayed after successful payment -->
+    <div id="checkout-success-view" style="display: none; padding-top: 12px;">
+      <h2 style="color: #16a34a;">Thank You for Your Order!</h2>
+      <div id="order-summary-details" style="margin: 16px 0; font-size: 14px; line-height: 1.8;"></div>
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <a href="{{ url_for('orders_page') }}" class="btn">View Order History</a>
+        <a href="{{ url_for('products_page') }}" class="btn btn-secondary">Continue Shopping</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Products - Online Shopping System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px;">
+  <h1>Product Catalogue</h1>
+  <p style="color: #6b7280; font-size: 14px;">Browse items across Electronics, Books, Clothing, and Home</p>
+</div>
+
+<!-- Inline notification box -->
+<div id="products-message" class="message-box" style="display: none;"></div>
+
+<!-- Search & Category Filter Bar -->
+<form method="GET" action="{{ url_for('products_page') }}" class="filter-bar">
+  <input 
+    type="text" 
+    name="q" 
+    placeholder="Search by product name or keyword..." 
+    value="{{ search_query }}"
+  >
+  <select name="category" onchange="this.form.submit()">
+    <option value="" {% if not selected_category %}selected{% endif %}>All Categories</option>
+    <option value="Electronics" {% if selected_category == 'Electronics' %}selected{% endif %}>Electronics</option>
+    <option value="Books" {% if selected_category == 'Books' %}selected{% endif %}>Books</option>
+    <option value="Clothing" {% if selected_category == 'Clothing' %}selected{% endif %}>Clothing</option>
+    <option value="Home" {% if selected_category == 'Home' %}selected{% endif %}>Home</option>
+  </select>
+  <button type="submit" class="btn">Filter</button>
+  {% if search_query or selected_category %}
+    <a href="{{ url_for('products_page') }}" class="btn btn-secondary">Clear</a>
+  {% endif %}
+</form>
+
+<!-- Products Table -->
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 60px;">ID</th>
+        <th>Product Name</th>
+        <th style="width: 140px;">Category</th>
+        <th style="width: 110px;">Price (₹)</th>
+        <th style="width: 100px;">Stock</th>
+        <th style="width: 180px;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if products %}
+        {% for p in products %}
+          <tr>
+            <td>#{{ p.product_id }}</td>
+            <td><strong>{{ p.name }}</strong></td>
+            <td>{{ p.category }}</td>
+            <td>₹{{ "%.2f"|format(p.price) }}</td>
+            <td>
+              {% if p.stock > 0 %}
+                <span class="in-stock">{{ p.stock }} in stock</span>
+              {% else %}
+                <span class="out-of-stock">Out of stock</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if p.stock > 0 %}
+                <div style="display: flex; align-items: center;">
+                  <input 
+                    type="number" 
+                    id="qty-{{ p.product_id }}" 
+                    class="qty-input" 
+                    value="1" 
+                    min="1" 
+                    max="{{ p.stock }}"
+                  >
+                  <button 
+                    type="button" 
+                    class="btn btn-sm" 
+                    onclick="addToCart({{ p.product_id }})"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              {% else %}
+                <button type="button" class="btn btn-sm" disabled>Out of Stock</button>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 32px; color: #6b7280;">
+            No products found matching your search criteria.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

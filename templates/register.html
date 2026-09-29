@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Online Shopping System{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Customer Registration</h1>
+  <p>Create a new account to begin shopping.</p>
+
+  <div id="register-message" class="message-box" style="display: none;"></div>
+
+  <form id="register-form" onsubmit="handleRegister(event)">
+    <div class="form-group">
+      <label for="reg-name">Full Name</label>
+      <input type="text" id="reg-name" required placeholder="e.g. Siddharth Chauhan" autocomplete="name">
+    </div>
+
+    <div class="form-group">
+      <label for="reg-email">Email Address</label>
+      <input type="email" id="reg-email" required placeholder="e.g. user@example.com" autocomplete="email">
+    </div>
+
+    <div class="form-group">
+      <label for="reg-password">Password</label>
+      <input type="password" id="reg-password" required placeholder="Minimum 6 characters, letter + number" autocomplete="new-password">
+      <small style="color: #6b7280; font-size: 12px; display: block; margin-top: 4px;">
+        Must be at least 6 characters and contain both letters and digits.
+      </small>
+    </div>
+
+    <button type="submit" id="reg-submit-btn" class="btn btn-block">Register</button>
+  </form>
+
+  <div style="margin-top: 20px; font-size: 13px; color: #4b5563; border-top: 1px solid #e5e7eb; padding-top: 16px;">
+    <p>Already have an account? <a href="{{ url_for('login_page') }}">Login here</a></p>
+  </div>
+</div>
+{% endblock %}

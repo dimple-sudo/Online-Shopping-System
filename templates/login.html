@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Online Shopping System{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Login</h1>
+  <p>Sign in to manage your cart, place orders, or access the admin panel.</p>
+
+  <div id="login-message" class="message-box" style="display: none;"></div>
+
+  <form id="login-form" onsubmit="handleLogin(event)">
+    <div class="form-group">
+      <label for="login-email">Email Address</label>
+      <input type="email" id="login-email" required placeholder="e.g. user@example.com" autocomplete="email">
+    </div>
+
+    <div class="form-group">
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" required placeholder="Enter password" autocomplete="current-password">
+    </div>
+
+    <div class="checkbox-group">
+      <input type="checkbox" id="login-as-admin">
+      <label for="login-as-admin">Login as Administrator</label>
+    </div>
+
+    <button type="submit" id="login-submit-btn" class="btn btn-block">Login</button>
+  </form>
+
+  <div style="margin-top: 20px; font-size: 13px; color: #4b5563; border-top: 1px solid #e5e7eb; padding-top: 16px;">
+    <p>Don't have an account? <a href="{{ url_for('register_page') }}">Register here</a></p>
+    <p style="margin-top: 8px;"><strong>Default Admin:</strong> admin@shop.com / Admin@123</p>
+  </div>
+</div>
+{% endblock %}

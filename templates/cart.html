@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart - Online Shopping System{% endblock %}
+
+{% block content %}
+<h1>Your Shopping Cart</h1>
+
+<div id="cart-message" class="message-box" style="display: none;"></div>
+
+{% if items %}
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th style="width: 140px;">Category</th>
+          <th style="width: 120px;">Unit Price</th>
+          <th style="width: 100px;">Quantity</th>
+          <th style="width: 120px;">Line Total</th>
+          <th style="width: 100px;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for itm in items %}
+          <tr>
+            <td>
+              <strong>{{ itm.name }}</strong>
+            </td>
+            <td>{{ itm.category }}</td>
+            <td>₹{{ "%.2f"|format(itm.price) }}</td>
+            <td>{{ itm.quantity }}</td>
+            <td>₹{{ "%.2f"|format(itm.line_total) }}</td>
+            <td>
+              <button 
+                type="button" 
+                class="btn btn-danger" 
+                onclick="removeFromCart({{ itm.product_id }})"
+              >
+                Remove
+              </button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bill Summary Breakdown Box -->
+  <div class="bill-card">
+    <h2>Bill Summary</h2>
+    
+    <div class="bill-line">
+      <span>Subtotal ({{ totals.item_count }} items)</span>
+      <span>₹{{ "%.2f"|format(totals.subtotal) }}</span>
+    </div>
+
+    <div class="bill-line">
+      <span>Discount (10% over ₹1000)</span>
+      <span style="color: {% if totals.discount > 0 %}#16a34a{% else %}inherit{% endif %};">
+        {% if totals.discount > 0 %}-₹{{ "%.2f"|format(totals.discount) }}{% else %}₹0.00{% endif %}
+      </span>
+    </div>
+
+    <div class="bill-line">
+      <span>Taxable Amount</span>
+      <span>₹{{ "%.2f"|format(totals.taxable_amount) }}</span>
+    </div>
+
+    <div class="bill-line">
+      <span>GST (18%)</span>
+      <span>₹{{ "%.2f"|format(totals.tax) }}</span>
+    </div>
+
+    <div class="bill-line">
+      <span>Delivery Fee</span>
+      <span>
+        {% if totals.delivery_charge == 0.0 %}
+          <span style="color: #16a34a;">FREE (orders &ge; ₹500)</span>
+        {% else %}
+          ₹{{ "%.2f"|format(totals.delivery_charge) }}
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="bill-line total">
+      <span>TOTAL PAYABLE</span>
+      <span>₹{{ "%.2f"|format(totals.total) }}</span>
+    </div>
+
+    <a href="{{ url_for('checkout_page') }}" class="btn btn-block" style="text-align: center;">
+      Proceed to Checkout
+    </a>
+  </div>
+
+{% else %}
+  <div class="card" style="text-align: center; padding: 48px 20px;">
+    <h2>Your cart is currently empty</h2>
+    <p style="color: #6b7280; margin-bottom: 20px;">You haven't added any products to your cart yet.</p>
+    <a href="{{ url_for('products_page') }}" class="btn">Start Shopping</a>
+  </div>
+{% endif %}
+{% endblock %}
